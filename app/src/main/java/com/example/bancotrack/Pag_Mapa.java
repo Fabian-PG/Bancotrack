@@ -190,5 +190,21 @@ public class Pag_Mapa extends AppCompatActivity {
         mapView.invalidate();
     }
 
+    // **********************************************
+    // MÉTODOS DE CAJEROS
+    // **********************************************
+
+    private void cargarCajeros() {
+        listaCajeros = new ArrayList<>();
+        // Coordenadas cercanas a La Dorada, Caldas (las que definiste)
+        listaCajeros.add(new Cajero("Cajero Centro Comercial", 5.454092917136365, -74.66470066546033));
+        listaCajeros.add(new Cajero("Cajero Sede Principal", 5.453113724567923, -74.66310965052007));
+        listaCajeros.add(new Cajero("Cajero Puerto Salgar", 5.46486969048301, -74.65566976443176));
+        listaCajeros.add(new Cajero("Cajero Doradal", 5.898389953803509, -74.73692626933399));
+        listaCajeros.add(new Cajero("Cajero Medellin", 6.2420314508424655, -75.58677371065433));
+        listaCajeros.add(new Cajero("Cajero Bogota", 4.727618048452373, -74.04680638761843));
+        listaCajeros.add(new Cajero("Cajero Guaduas", 5.070373245439438, -74.59960995002675));
+        listaCajeros.add(new Cajero("CCorresponsal Bancario Bancolombia 3", 5.447884936915848, -74.67063841779787));
+    }
 
 }
