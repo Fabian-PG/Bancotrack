@@ -235,4 +235,55 @@ public class Pag_Mapa extends AppCompatActivity {
         mapView.invalidate();
     }
 
+    public void ObtnerClima(double lat, double lon) {
+        String Url = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&units=metric&appid=" + API_KEY + "&lang=es";
+
+        // Usamos la cola de Volley
+        RequestQueue solicituQuee = Volley.newRequestQueue(this);
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                Url,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            double temperatura = response.getJSONObject("main").getDouble("temp");
+                            String descripcion = response.getJSONArray("weather").getJSONObject(0).getString("description");
+
+                            // Formatear la temperatura a un decimal
+                            String tempClima = String.format(Locale.getDefault(), "%.1f", temperatura);
+
+                            // ACTUALIZAR TV: Solo con el nombre, temperatura y descripción
+                            tvDirecciones.setText("Destino: " + nombreDestino +
+                                    " | Clima: " + tempClima + " °C (" + descripcion + ")" +
+                                    ". Toca 'Calcula la Ruta'.");
+
+                            // *** Eliminadas todas las líneas relacionadas con iconos y Picasso ***
+
+                        } catch (Exception e) {
+                            // En caso de error al parsear el JSON
+                            tvDirecciones.setText("Destino: " + nombreDestino +
+                                    " | Clima: No disponible. Toca 'Calcula la Ruta'.");
+                            e.printStackTrace();
+                        }
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        // En caso de error de red
+                        tvDirecciones.setText("Destino: " + nombreDestino +
+                                " | Clima: Error de red. Toca 'Calcula la Ruta'.");
+                        Log.e("Clima Error", volleyError.toString());
+                        Toast.makeText(Pag_Mapa.this, "Error al acceder al clima.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
+        solicituQuee.add(request);
+    }
+
 }
