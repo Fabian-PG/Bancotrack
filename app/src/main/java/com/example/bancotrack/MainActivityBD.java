@@ -199,6 +199,39 @@ public class MainActivityBD extends AppCompatActivity implements PuntoRetiroAdap
             }
         });
 
-
+        // Botón ELIMINAR
+        btnEliminar.setOnClickListener(view -> EliminarPunto());
     }
+
+    // METODO PARA REGISTRAR PUNTO (Create)
+    public void RegistraPunto() {
+        AdminSQLiteOpenHelper adminBD = new AdminSQLiteOpenHelper(this);
+        SQLiteDatabase baseDeDatos = adminBD.getWritableDatabase();
+
+        String nombre = etNombre.getText().toString().trim();
+        String direccion = etDireccion.getText().toString().trim();
+        String tipo = etTipo.getText().toString().trim();
+
+        if (!nombre.isEmpty() && !direccion.isEmpty() && !tipo.isEmpty()) {
+            ContentValues registro = new ContentValues();
+            registro.put(AdminSQLiteOpenHelper.COL_NOMBRE, nombre);
+            registro.put(AdminSQLiteOpenHelper.COL_DIRECCION, direccion);
+            registro.put(AdminSQLiteOpenHelper.COL_TIPO, tipo);
+
+            long resultado = baseDeDatos.insert(AdminSQLiteOpenHelper.NOMBRE_TABLA, null, registro);
+            baseDeDatos.close();
+
+            if (resultado != -1) {
+                ocultarCamposCRUD();
+                CargarPuntos(null);
+                Toast.makeText(this, "Punto Registrado Exitosamente!", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(this, "Error: Ya existe un punto con ese nombre.", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(this, "Debe completar todos los campos", Toast.LENGTH_LONG).show();
+        }
+    }
+
+
 }
