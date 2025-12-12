@@ -306,4 +306,29 @@ public class Pag_Mapa extends AppCompatActivity {
         });
     }
 
+    private void abrirRutaEnGoogleMaps(GeoPoint destinoPunto) {
+
+        Location ubicacionActual = lastProcessedLocation;
+
+        if (ubicacionActual == null) {
+            Toast.makeText(this, "Aún no tenemos tu ubicación actual. Espera a que el GPS se active.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Formato correcto para navegación de Google Maps
+        String uri = String.format(Locale.ENGLISH,
+                "http://maps.google.com/maps?saddr=%f,%f&daddr=%f,%f",
+                ubicacionActual.getLatitude(), ubicacionActual.getLongitude(),
+                destinoPunto.getLatitude(), destinoPunto.getLongitude());
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        intent.setPackage("com.google.android.apps.maps");
+
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, "No se encontró la aplicación Google Maps instalada.", Toast.LENGTH_LONG).show();
+        }
+    }
+
 }
