@@ -233,5 +233,35 @@ public class MainActivityBD extends AppCompatActivity implements PuntoRetiroAdap
         }
     }
 
+    // METODO PARA ACTUALIZAR PUNTO (Update)
+    public void ActualizarPunto() {
+        AdminSQLiteOpenHelper adminBD = new AdminSQLiteOpenHelper(this);
+        SQLiteDatabase baseDeDatos = adminBD.getWritableDatabase();
+
+        String direccion = etDireccion.getText().toString().trim();
+        String tipo = etTipo.getText().toString().trim();
+
+        if (!nombreOriginalEdicion.isEmpty() && !direccion.isEmpty() && !tipo.isEmpty()) {
+            ContentValues registro = new ContentValues();
+            registro.put(AdminSQLiteOpenHelper.COL_DIRECCION, direccion);
+            registro.put(AdminSQLiteOpenHelper.COL_TIPO, tipo);
+
+            int cantidad = baseDeDatos.update(AdminSQLiteOpenHelper.NOMBRE_TABLA, registro,
+                    AdminSQLiteOpenHelper.COL_NOMBRE + " = ?", new String[]{nombreOriginalEdicion});
+            baseDeDatos.close();
+
+            if (cantidad != 0) {
+                ocultarCamposCRUD();
+                CargarPuntos(null);
+                Toast.makeText(this, "Punto Modificado Correctamente", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Error: El punto no existe.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "Debe tener información en Dirección y Tipo", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
 
 }
