@@ -176,4 +176,19 @@ public class Pag_Mapa extends AppCompatActivity {
             }
         }
     }
+
+    private void actualizarMarcadorUbicacion(Location location) {
+        GeoPoint puntoActual = new GeoPoint(location.getLatitude(), location.getLongitude());
+        miMarcador.setPosition(puntoActual);
+
+        // Zoom solo si es necesario (cuando la aplicación se centra por primera vez)
+        if (mapView.getZoomLevel() < 12.8) {
+            mapView.getController().setZoom(15.0);
+        }
+
+        mapView.getController().setCenter(puntoActual);
+        mapView.invalidate();
+    }
+
+
 }
