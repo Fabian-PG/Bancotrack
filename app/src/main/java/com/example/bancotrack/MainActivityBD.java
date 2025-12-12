@@ -1,7 +1,7 @@
 package com.example.bancotrack;
 
 import android.content.ContentValues;
-import android.content.Intent;
+
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -27,7 +27,6 @@ public class MainActivityBD extends AppCompatActivity implements PuntoRetiroAdap
 
     private EditText etNombre, etDireccion, etTipo, etBusqueda;
     private Button btnRegistrar, btnGuardarCambios, btnEliminar;
-    private Button btnVolver2;
 
     private RecyclerView recyclerView;
     private PuntoRetiroAdapter adapter;
@@ -50,11 +49,7 @@ public class MainActivityBD extends AppCompatActivity implements PuntoRetiroAdap
         btnRegistrar = findViewById(R.id.btnRegistrar);
         btnGuardarCambios = findViewById(R.id.btnGuardarCambios);
         btnEliminar = findViewById(R.id.btnEliminar);
-        btnVolver2 = findViewById(R.id.btnVolver2);
 
-        btnVolver2.setOnClickListener(v -> {
-            finish(); // Cierra MainActivityBD y regresa a la actividad que la llamó (ej: Pag_Mapa o la principal)
-        });
 
         // 2. Configuración del RecyclerView
         recyclerView = findViewById(R.id.rvPuntos);
@@ -101,7 +96,7 @@ public class MainActivityBD extends AppCompatActivity implements PuntoRetiroAdap
         btnEliminar.setVisibility(View.GONE); // Eliminar también se oculta si no estamos en edición
 
         // El botón Registrar se mantiene visible para iniciar un nuevo registro
-        btnRegistrar.setVisibility(View.VISIBLE);
+
         btnRegistrar.setText("Registrar Nuevo Punto");
         limpiarCampos();
     }
@@ -293,7 +288,6 @@ public class MainActivityBD extends AppCompatActivity implements PuntoRetiroAdap
             Toast.makeText(this, "No hay punto seleccionado para eliminar.", Toast.LENGTH_SHORT).show();
         }
     }
-
 
 
 }

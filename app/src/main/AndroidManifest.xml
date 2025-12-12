@@ -17,10 +17,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Bancotrack">
         <activity
+<<<<<<< Alejandra
+            android:name=".PuntoRetiroAdapter"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivityBD"
+=======
             android:name=".MainActivityBD"
             android:exported="false" />
         <activity
             android:name=".Pag_Mapa"
+>>>>>>> main
             android:exported="false" />
         <activity
             android:name=".MainActivity"
