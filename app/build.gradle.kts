@@ -41,4 +41,10 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    // ➡️ NECESARIO PARA USAR RecyclerView
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+
+    // ➡️ NECESARIO PARA USAR CardView (para el diseño de las tarjetas)
+    implementation("androidx.cardview:cardview:1.0.0")
 }
