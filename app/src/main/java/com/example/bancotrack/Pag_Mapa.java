@@ -286,4 +286,24 @@ public class Pag_Mapa extends AppCompatActivity {
         solicituQuee.add(request);
     }
 
+    private void calcularYRuta() {
+        if (lastProcessedLocation == null) {
+            Toast.makeText(this, "Aún no se ha obtenido tu ubicación (Tú). Espera un momento.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (destinoSeleccionado == null) {
+            Toast.makeText(this, "Selecciona un cajero tocando su marcador en el mapa primero.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Ejecutar en el hilo principal
+        runOnUiThread(() -> {
+            // Actualiza el TV con la dirección
+            tvDirecciones.setText("Ruta a " + nombreDestino + ". Abriendo Google Maps...");
+
+            // Llamar a la función que abre Google Maps
+            abrirRutaEnGoogleMaps(destinoSeleccionado);
+        });
+    }
+
 }
