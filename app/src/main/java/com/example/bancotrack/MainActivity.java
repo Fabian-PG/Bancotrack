@@ -13,6 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 public class MainActivity extends AppCompatActivity {
 
     private Button btnMapa;
+    private Button btnInformacion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,18 @@ public class MainActivity extends AppCompatActivity {
 
             // 2. Iniciar la actividad
             startActivity(intent);
+        });
+
+        Button btnInformacion = findViewById(R.id.btnInformacion);
+
+        btnInformacion.setOnClickListener(v -> {
+            // Crear un Intent para abrir MainActivityBD
+            // El Intent es como una solicitud para el sistema de que quieres hacer algo (en este caso, abrir una Activity)
+            Intent intent = new Intent(MainActivity.this, MainActivityBD.class);
+            startActivity(intent);
+
+            // Opcional: cerrar esta Activity para que el usuario no pueda volver atrás con el botón 'back'
+            //finish();
         });
     }
 }

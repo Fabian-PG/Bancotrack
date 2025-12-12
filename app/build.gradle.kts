@@ -48,13 +48,17 @@ dependencies {
     //LIBRERIA DE OSMDROID
     implementation("org.osmdroid:osmdroid-android:6.1.14")
     implementation("org.osmdroid:osmdroid-android:6.1.18")
-// o la versión que estés usando
-// **IMPORTANTE: Añadir la librería de contribuciones para RoadManager**
+    // o la versión que estés usando
+    // Añadir la librería de contribuciones para RoadManager**
     implementation("org.osmdroid:osmdroid-mapsforge:6.1.18")
-// (Opcional, si usas Mapsforge)
     implementation("org.osmdroid:osmdroid-wms:6.1.18")
-// Dependencia para hacer peticiones HTTP (Volley)
+    // Dependencia para hacer peticiones HTTP (Volley)
     implementation("com.android.volley:volley:1.2.1")
 
+    // ➡️ NECESARIO PARA USAR RecyclerView
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
+
+    // ➡️ NECESARIO PARA USAR CardView (para el diseño de las tarjetas)
+    implementation("androidx.cardview:cardview:1.0.0")
 
 }
