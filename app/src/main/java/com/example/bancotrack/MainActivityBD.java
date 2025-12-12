@@ -262,6 +262,26 @@ public class MainActivityBD extends AppCompatActivity implements PuntoRetiroAdap
         }
     }
 
+    // METODO PARA ELIMINAR PUNTO (Delete)
+    public void EliminarPunto() {
+        AdminSQLiteOpenHelper adminBD = new AdminSQLiteOpenHelper(this);
+        SQLiteDatabase baseDeDatos = adminBD.getWritableDatabase();
 
+        if (!nombreOriginalEdicion.isEmpty()) {
+            int cantidad = baseDeDatos.delete(AdminSQLiteOpenHelper.NOMBRE_TABLA,
+                    AdminSQLiteOpenHelper.COL_NOMBRE + " = ?", new String[]{nombreOriginalEdicion});
+            baseDeDatos.close();
+
+            if (cantidad == 1) {
+                ocultarCamposCRUD();
+                CargarPuntos(null);
+                Toast.makeText(this, "Punto Eliminado Correctamente", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(this, "Error: El punto no existe.", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "No hay punto seleccionado para eliminar.", Toast.LENGTH_SHORT).show();
+        }
+    }
 
 }
