@@ -88,6 +88,8 @@
         android:layout_marginEnd="65dp"
         android:backgroundTint="@color/btnMapa"
         android:text="Ver Mapa"
+        android:textColor="@color/white"
+        android:textColorLink="@color/white"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
