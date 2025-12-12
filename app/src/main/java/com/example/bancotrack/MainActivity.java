@@ -12,15 +12,16 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
+    private Button btnMapa;
+    private Button btnInformacion;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        Button btnIrALista = findViewById(R.id.btn_ir_a_lista);
 
-        btnIrALista.setOnClickListener(v -> {
             // Crear un Intent para abrir MainActivityBD
             // El Intent es como una solicitud para el sistema de que quieres hacer algo (en este caso, abrir una Activity)
             Intent intent = new Intent(MainActivity.this, MainActivityBD.class);

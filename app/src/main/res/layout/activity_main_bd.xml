@@ -6,18 +6,13 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
     android:paddingTop="24dp"
     tools:context=".MainActivityBD">
 
     <TextView
         android:id="@+id/tvTitulo"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="16dp"
-        android:text="Lista de Puntos Bancolombia"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
+
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,6 +25,7 @@
         android:hint="Buscar cajero, corresponsal o sucursal..."
         android:inputType="text"
         android:maxLines="1"
+
         app:layout_constraintEnd_toStartOf="@+id/btnBuscar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvTitulo" />
@@ -39,7 +35,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:text="Buscar"
+
         app:layout_constraintBottom_toBottomOf="@+id/txtBusqueda"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/txtBusqueda" />
@@ -51,17 +47,14 @@
         android:layout_marginHorizontal="16dp"
         android:layout_marginTop="8dp"
         android:text="Registrar Nuevo Punto"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtBusqueda" />
 
     <LinearLayout
         android:id="@+id/layout_crud_fields"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingHorizontal="16dp"
-        android:layout_marginTop="8dp"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnRegistrar">
@@ -72,6 +65,7 @@
             android:layout_height="wrap_content"
             android:hint="Nombre del Punto (Clave Única)"
             android:inputType="textCapWords"
+
             android:visibility="gone"
             tools:visibility="visible" />
 
@@ -81,6 +75,7 @@
             android:layout_height="wrap_content"
             android:hint="Dirección"
             android:inputType="textPostalAddress"
+
             android:visibility="gone"
             tools:visibility="visible" />
 
@@ -90,33 +85,26 @@
             android:layout_height="wrap_content"
             android:hint="Tipo (Ej: Cajero, Corresponsal, Sucursal)"
             android:inputType="textCapWords"
+
             android:visibility="gone"
             tools:visibility="visible" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center">
+
 
             <Button
                 android:id="@+id/btnGuardarCambios"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Guardar/Actualizar"
-                android:layout_marginEnd="4dp"
+
                 android:visibility="gone"
                 tools:visibility="visible" />
 
             <Button
                 android:id="@+id/btnEliminar"
                 android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content"
-                android:text="Eliminar"
-                android:backgroundTint="#FF4444"
-                android:layout_marginStart="4dp"
+
                 android:visibility="gone"
                 tools:visibility="visible" />
         </LinearLayout>
@@ -128,11 +116,5 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
-        android:paddingHorizontal="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/layout_crud_fields"
-        tools:listitem="@layout/item_punto_retiro" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
