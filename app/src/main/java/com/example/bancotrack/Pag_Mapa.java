@@ -207,4 +207,32 @@ public class Pag_Mapa extends AppCompatActivity {
         listaCajeros.add(new Cajero("CCorresponsal Bancario Bancolombia 3", 5.447884936915848, -74.67063841779787));
     }
 
+    private void añadirMarcadoresCajeros() {
+        for (Cajero cajero : listaCajeros) {
+            Marker cajeroMarker = new Marker(mapView);
+            cajeroMarker.setPosition(cajero.punto);
+            cajeroMarker.setTitle(cajero.nombre);
+            cajeroMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+
+            cajeroMarker.setOnMarkerClickListener((marker, mapView) -> {
+                // 1. Guardar el destino seleccionado
+                destinoSeleccionado = marker.getPosition();
+                nombreDestino = marker.getTitle();
+
+                ObtnerClima(destinoSeleccionado.getLatitude(), destinoSeleccionado.getLongitude());
+
+                // 2. Actualizar el TV
+                tvDirecciones.setText("Destino: " + nombreDestino + ". Calculando el clima...");
+
+                // 3. Centrar el mapa en el marcador seleccionado
+                mapView.getController().animateTo(destinoSeleccionado);
+
+                return false;
+            });
+
+            mapView.getOverlays().add(cajeroMarker);
+        }
+        mapView.invalidate();
+    }
+
 }
