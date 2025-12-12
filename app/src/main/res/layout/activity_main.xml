@@ -2,18 +2,116 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#2B4580"
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/txtDescripcion"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="40dp"
+        android:gravity="center"
+        android:text="Encuentra cajeros y sucursales cerca de ti al instante."
+        android:textColor="#EAEAEA"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtBancolombia" />
+
+    <TextView
+        android:id="@+id/txtBancolombia"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:layout_marginTop="1dp"
+        android:text="Bancolombia"
+        android:textColor="#D9B16F"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtTitulo" />
+
+    <TextView
+        android:id="@+id/txtTitulo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:text="Localizador"
+        android:textColor="@android:color/white"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="72dp"
+        android:layout_height="99dp"
+        android:layout_marginStart="169dp"
+        android:layout_marginTop="78dp"
+        android:layout_marginEnd="170dp"
+        android:backgroundTint="@color/btnMapa"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ubicaciones" />
+
+    <Button
+        android:id="@+id/btnInformacion"
+        android:layout_width="281dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="65dp"
+        android:layout_marginTop="35dp"
+        android:layout_marginEnd="65dp"
+        android:backgroundTint="#EBE5E5"
+        android:text="Información de Puntos"
+        android:textColor="@color/btnMapa"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnMapa" />
+
+    <Button
+        android:id="@+id/btnMapa"
+        android:layout_width="281dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="65dp"
+        android:layout_marginTop="75dp"
+        android:layout_marginEnd="65dp"
+        android:backgroundTint="@color/btnMapa"
+        android:text="Ver Mapa"
+        android:textColor="@color/white"
+        android:textColorLink="@color/white"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtDescripcion" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="164dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="164dp"
+        android:layout_marginBottom="88dp"
+        android:text="Versión 2.4.0"
+        android:textColor="@color/white"
+        android:textSize="14sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/btnInformacion" />
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,354 @@
+package com.example.bancotrack;
+
+import android.Manifest;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.net.Uri;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+
+import org.json.JSONObject;
+import org.osmdroid.config.Configuration;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Marker;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
+
+public class Pag_Mapa extends AppCompatActivity {
+
+    private MapView mapView;
+    // Variables de Localización
+    private FusedLocationProviderClient fusedLocationClient;
+    private Location lastProcessedLocation = null;
+    private Marker miMarcador;
+    private LocationCallback locationCallback;
+    private LocationRequest locationRequest;
+
+    // Variables de UI
+    private Button btnCalcular;
+    private TextView tvDirecciones;
+    private Button btnVolver;
+
+    // Variables de Ruta
+    private GeoPoint destinoSeleccionado = null;
+    private String nombreDestino = "";
+
+    // Constante para el manejo de permisos
+    private static final int PERMISSION_REQUEST_CODE = 99;
+
+    // Variables de Cajeros
+    private List<Cajero> listaCajeros;
+    private String API_KEY = "8242b99f48d8cd573f6393829e6ff5c8"; // Tu clave de OpenWeatherMap
+    private String tempClima = ""; // Variable para guardar la temperatura
+
+    // Clase interna para Cajeros
+    private static class Cajero {
+        String nombre;
+        GeoPoint punto;
+
+        public Cajero(String nombre, double lat, double lon) {
+            this.nombre = nombre;
+            this.punto = new GeoPoint(lat, lon);
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // 1. Configuración de osmdroid
+        Configuration.getInstance().load(getApplicationContext(), PreferenceManager.getDefaultSharedPreferences(getApplicationContext()));
+        setContentView(R.layout.activity_pag_mapa);
+
+        // 2. Configuración del Mapa
+        mapView = findViewById(R.id.mapView);
+        mapView.setMultiTouchControls(true);
+        mapView.getController().setZoom(15.0);
+
+        btnCalcular = findViewById(R.id.btnCalcular);
+        tvDirecciones = findViewById(R.id.tvDirecciones);
+        btnVolver = findViewById(R.id.btnVolver);
+
+        // Listener del botón 'Calcula la Ruta'
+        btnCalcular.setOnClickListener(v -> {
+            calcularYRuta();
+        });
+
+        // Listener del botón 'Volver' (NUEVA FUNCIÓN)
+        btnVolver.setOnClickListener(v -> {
+            // finish() cierra la actividad actual y regresa a la actividad que la llamó (MainActivity)
+            finish();
+        });
+
+        // 3. Inicialización de Servicios de Localización
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // Configuración de la frecuencia de actualización de ubicación
+        locationRequest = new LocationRequest.Builder(10000)
+                .setMinUpdateIntervalMillis(5000)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .build();
+
+        configurarLocationCallback();
+
+        // 4. Configuración del Marcador de Usuario ("Tú")
+        miMarcador = new Marker(mapView);
+        miMarcador.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+        miMarcador.setTitle("Tú");
+        mapView.getOverlays().add(miMarcador);
+
+        // 5. Carga de Cajeros y Marcadores
+        cargarCajeros();
+        añadirMarcadoresCajeros();
+
+        // 6. Pedir permisos
+        pedirPermisos();
+    }
+
+    // **********************************************
+    // MÉTODOS DE LOCALIZACIÓN
+    // **********************************************
+
+    private void configurarLocationCallback() {
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                Location location = locationResult.getLastLocation();
+                if (location != null) {
+                    lastProcessedLocation = location;
+                    actualizarMarcadorUbicacion(location);
+                }
+            }
+        };
+    }
+
+    private void iniciarActualizacionesDeUbicacion() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+    }
+
+    private void pedirPermisos() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            iniciarActualizacionesDeUbicacion();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                iniciarActualizacionesDeUbicacion();
+            } else {
+                Toast.makeText(this, "Permiso de ubicación denegado. No se mostrará tu posición en el mapa.", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
+
+    private void actualizarMarcadorUbicacion(Location location) {
+        GeoPoint puntoActual = new GeoPoint(location.getLatitude(), location.getLongitude());
+        miMarcador.setPosition(puntoActual);
+
+        // Zoom solo si es necesario (cuando la aplicación se centra por primera vez)
+        if (mapView.getZoomLevel() < 12.8) {
+            mapView.getController().setZoom(15.0);
+        }
+
+        mapView.getController().setCenter(puntoActual);
+        mapView.invalidate();
+    }
+
+    // **********************************************
+    // MÉTODOS DE CAJEROS
+    // **********************************************
+
+    private void cargarCajeros() {
+        listaCajeros = new ArrayList<>();
+        // Coordenadas cercanas a La Dorada, Caldas (las que definiste)
+        listaCajeros.add(new Cajero("Cajero Centro Comercial", 5.454092917136365, -74.66470066546033));
+        listaCajeros.add(new Cajero("Cajero Sede Principal", 5.453113724567923, -74.66310965052007));
+        listaCajeros.add(new Cajero("Cajero Puerto Salgar", 5.46486969048301, -74.65566976443176));
+        listaCajeros.add(new Cajero("Cajero Doradal", 5.898389953803509, -74.73692626933399));
+        listaCajeros.add(new Cajero("Cajero Medellin", 6.2420314508424655, -75.58677371065433));
+        listaCajeros.add(new Cajero("Cajero Bogota", 4.727618048452373, -74.04680638761843));
+        listaCajeros.add(new Cajero("Cajero Guaduas", 5.070373245439438, -74.59960995002675));
+        listaCajeros.add(new Cajero("CCorresponsal Bancario Bancolombia 3", 5.447884936915848, -74.67063841779787));
+    }
+
+    private void añadirMarcadoresCajeros() {
+        for (Cajero cajero : listaCajeros) {
+            Marker cajeroMarker = new Marker(mapView);
+            cajeroMarker.setPosition(cajero.punto);
+            cajeroMarker.setTitle(cajero.nombre);
+            cajeroMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM);
+
+            cajeroMarker.setOnMarkerClickListener((marker, mapView) -> {
+                // 1. Guardar el destino seleccionado
+                destinoSeleccionado = marker.getPosition();
+                nombreDestino = marker.getTitle();
+
+                ObtnerClima(destinoSeleccionado.getLatitude(), destinoSeleccionado.getLongitude());
+
+                // 2. Actualizar el TV
+                tvDirecciones.setText("Destino: " + nombreDestino + ". Calculando el clima...");
+
+                // 3. Centrar el mapa en el marcador seleccionado
+                mapView.getController().animateTo(destinoSeleccionado);
+
+                return false;
+            });
+
+            mapView.getOverlays().add(cajeroMarker);
+        }
+        mapView.invalidate();
+    }
+
+    public void ObtnerClima(double lat, double lon) {
+        String Url = "https://api.openweathermap.org/data/2.5/weather?lat=" + lat + "&lon=" + lon + "&units=metric&appid=" + API_KEY + "&lang=es";
+
+        // Usamos la cola de Volley
+        RequestQueue solicituQuee = Volley.newRequestQueue(this);
+
+        JsonObjectRequest request = new JsonObjectRequest(
+                Request.Method.GET,
+                Url,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            double temperatura = response.getJSONObject("main").getDouble("temp");
+                            String descripcion = response.getJSONArray("weather").getJSONObject(0).getString("description");
+
+                            // Formatear la temperatura a un decimal
+                            String tempClima = String.format(Locale.getDefault(), "%.1f", temperatura);
+
+                            // ACTUALIZAR TV: Solo con el nombre, temperatura y descripción
+                            tvDirecciones.setText("Destino: " + nombreDestino +
+                                    " | Clima: " + tempClima + " °C (" + descripcion + ")" +
+                                    ". Toca 'Calcula la Ruta'.");
+
+                            // *** Eliminadas todas las líneas relacionadas con iconos y Picasso ***
+
+                        } catch (Exception e) {
+                            // En caso de error al parsear el JSON
+                            tvDirecciones.setText("Destino: " + nombreDestino +
+                                    " | Clima: No disponible. Toca 'Calcula la Ruta'.");
+                            e.printStackTrace();
+                        }
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+                        // En caso de error de red
+                        tvDirecciones.setText("Destino: " + nombreDestino +
+                                " | Clima: Error de red. Toca 'Calcula la Ruta'.");
+                        Log.e("Clima Error", volleyError.toString());
+                        Toast.makeText(Pag_Mapa.this, "Error al acceder al clima.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+        );
+
+        solicituQuee.add(request);
+    }
+
+    private void calcularYRuta() {
+        if (lastProcessedLocation == null) {
+            Toast.makeText(this, "Aún no se ha obtenido tu ubicación (Tú). Espera un momento.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        if (destinoSeleccionado == null) {
+            Toast.makeText(this, "Selecciona un cajero tocando su marcador en el mapa primero.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Ejecutar en el hilo principal
+        runOnUiThread(() -> {
+            // Actualiza el TV con la dirección
+            tvDirecciones.setText("Ruta a " + nombreDestino + ". Abriendo Google Maps...");
+
+            // Llamar a la función que abre Google Maps
+            abrirRutaEnGoogleMaps(destinoSeleccionado);
+        });
+    }
+
+    private void abrirRutaEnGoogleMaps(GeoPoint destinoPunto) {
+
+        Location ubicacionActual = lastProcessedLocation;
+
+        if (ubicacionActual == null) {
+            Toast.makeText(this, "Aún no tenemos tu ubicación actual. Espera a que el GPS se active.", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        // Formato correcto para navegación de Google Maps
+        String uri = String.format(Locale.ENGLISH,
+                "http://maps.google.com/maps?saddr=%f,%f&daddr=%f,%f",
+                ubicacionActual.getLatitude(), ubicacionActual.getLongitude(),
+                destinoPunto.getLatitude(), destinoPunto.getLongitude());
+
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+        intent.setPackage("com.google.android.apps.maps");
+
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(this, "No se encontró la aplicación Google Maps instalada.", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // **********************************************
+    // CICLO DE VIDA DE LA ACTIVIDAD
+    // **********************************************
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapView.onResume();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            iniciarActualizacionesDeUbicacion();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+        fusedLocationClient.removeLocationUpdates(locationCallback);
+    }
+}
