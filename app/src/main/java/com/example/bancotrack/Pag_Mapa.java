@@ -154,4 +154,26 @@ public class Pag_Mapa extends AppCompatActivity {
         }
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
+
+    private void pedirPermisos() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            iniciarActualizacionesDeUbicacion();
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERMISSION_REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                iniciarActualizacionesDeUbicacion();
+            } else {
+                Toast.makeText(this, "Permiso de ubicación denegado. No se mostrará tu posición en el mapa.", Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 }
