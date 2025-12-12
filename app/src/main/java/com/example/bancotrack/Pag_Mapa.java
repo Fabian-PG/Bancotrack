@@ -331,4 +331,23 @@ public class Pag_Mapa extends AppCompatActivity {
         }
     }
 
+    // **********************************************
+    // CICLO DE VIDA DE LA ACTIVIDAD
+    // **********************************************
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mapView.onResume();
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            iniciarActualizacionesDeUbicacion();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mapView.onPause();
+        fusedLocationClient.removeLocationUpdates(locationCallback);
+    }
 }
