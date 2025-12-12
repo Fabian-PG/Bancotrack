@@ -42,4 +42,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    //libreria de google
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+    //LIBRERIA DE OSMDROID
+    implementation("org.osmdroid:osmdroid-android:6.1.14")
 }
